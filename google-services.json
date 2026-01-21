@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "799260339781",
+    "project_id": "tfifan-77f76",
+    "storage_bucket": "tfifan-77f76.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:799260339781:android:0ff9fa025a2d8027577d2c",
+        "android_client_info": {
+          "package_name": "com.tfi.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTry01dAo0LSlooU7QKnBFyQKnxhQY0zY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
