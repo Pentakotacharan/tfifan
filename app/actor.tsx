@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import { 
   View, 
   Text, 
@@ -39,7 +38,7 @@ export default function ActorScreen() {
     
     // Final Navigation to Tabs
     console.log("Selected Actor ID:", selectedActor);
-    router.push('/(tabs)'); 
+    router.push('/rank'); 
   };
 
   return (

@@ -1,74 +1,129 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
+import MaskedView from '@react-native-masked-view/masked-view';
 
-const { height } = Dimensions.get('window');
+const { height, width } = Dimensions.get('window');
+
+// JSON Design Tokens
+const TOKENS = {
+  colors: {
+    gradientStart: '#1A0B2E',
+    gradientEnd: '#000000',
+    textPrimary: '#FFFFFF',
+    textInverse: '#000000',
+    divider: '#4A4A4A',
+    logoFaceStart: '#D9C6FF',
+    logoFaceEnd: '#AC8EFC',
+    logoShadow: '#000000',
+  },
+  typography: {
+    logoHero: {
+      fontFamily: 'Antonio',
+      fontSize: 128,
+      lineHeight: 108,
+      letterSpacing: -4,
+    },
+    buttonLabel: {
+      fontFamily: 'Metropolis SemiBold',
+      fontSize: 17,
+      lineHeight: 20,
+    },
+    dividerLabel: {
+      fontFamily: 'Metropolis SemiBold',
+      fontSize: 12,
+      letterSpacing: 1.2,
+    }
+  },
+  spacing: {
+    gutter: 24,
+    stackGap: 16,
+    logoTopPercent: 0.28,
+    footerBottom: 50,
+  },
+  components: {
+    backBtnSize: 59,
+    authBtnHeight: 56,
+    authBtnRadius: 100,
+    authBtnMaxWidth: 335,
+    shadowOffset: 13, // px
+  }
+};
 
 export default function SignupScreen() {
   const router = useRouter();
+
+   // Update this function
   const handleGoogleSignup = () => {
     // Navigate to the Name Input screen
     router.push('/username'); 
   };
-
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
       
-      {/* Background Gradient: Matches Intro Token #381C67 -> #000000 */}
+      {/* 1. Background Gradient */}
       <LinearGradient
-        colors={['#381C67', '#000000']}
-        locations={[0.2, 1.0]}
+        colors={[TOKENS.colors.gradientStart, TOKENS.colors.gradientEnd]}
+        locations={[0.0, 1.0]} // Smooth top-to-bottom
         style={StyleSheet.absoluteFill}
       />
 
-      {/* --- Back Button --- */}
+      {/* 2. Back Button */}
       <TouchableOpacity 
         style={styles.backButton}
         onPress={() => router.back()}
         activeOpacity={0.7}
       >
-        <AntDesign name="arrow-left" size={24} color="#FFFFFF" />
+        <AntDesign name="arrow-left" size={25} color={TOKENS.colors.textPrimary} />
       </TouchableOpacity>
 
-      {/* --- 3D Logo Block --- */}
+      {/* 3. 3D Logo Block */}
       <View style={styles.logoContainer}>
-        {/* Layer 0: Deep Shadow (Black) */}
-        <Text style={[styles.logoText, styles.logoShadowDeep]}>
+        {/* Layer A: Hard Extrusion Shadow (Black) */}
+        <Text style={[styles.logoBase, styles.logoShadow]}>
           TFI{'\n'}FAN
         </Text>
         
-        {/* Layer 1: Mid Shadow (Dark Purple) */}
-        <Text style={[styles.logoText, styles.logoShadowMid]}>
-          TFI{'\n'}FAN
-        </Text>
-        
-        {/* Layer 2: Main Face (Gradient-like Lavender) */}
-        <Text style={[styles.logoText, styles.logoFace]}>
-          TFI{'\n'}FAN
-        </Text>
+        {/* Layer B: Gradient Face (Top Layer) */}
+        <View style={styles.logoFaceWrapper}>
+           <MaskedView
+            style={styles.maskedView}
+            maskElement={
+              <Text style={styles.logoBase}>
+                TFI{'\n'}FAN
+              </Text>
+            }
+          >
+            <LinearGradient
+              colors={[TOKENS.colors.logoFaceStart, TOKENS.colors.logoFaceEnd]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={{ flex: 1 }}
+            />
+          </MaskedView>
+        </View>
       </View>
 
-      {/* --- Footer Section --- */}
+      {/* 4. Footer Section */}
       <View style={styles.footer}>
         
-        {/* Divider with Spacing */}
+        {/* Divider */}
         <View style={styles.dividerRow}>
           <View style={styles.line} />
           <Text style={styles.dividerText}>SIGNUP VIA</Text>
           <View style={styles.line} />
         </View>
 
-        {/* Google Button: Outline + Dark Background */}
+        {/* 5. Google Button */}
         <TouchableOpacity style={styles.googleButton} activeOpacity={0.8} onPress={handleGoogleSignup}>
-          <AntDesign name="google" size={20} color="#FFFFFF" style={styles.btnIcon} />
-          <Text style={styles.googleBtnText}>Continue with Google</Text>
-        </TouchableOpacity>
+    <Text style={styles.googleBtnText}>Continue with Google</Text>
+</TouchableOpacity>
 
-        {/* Apple Button: Solid White */}
+        {/* 6. Apple Button */}
         <TouchableOpacity style={styles.appleButton} activeOpacity={0.9}>
           <AntDesign name="apple" size={20} color="#000000" style={styles.btnIcon} />
           <Text style={styles.appleBtnText}>Continue with Apple</Text>
@@ -82,74 +137,77 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
-    alignItems: 'center', // Centers content horizontally
+    backgroundColor: TOKENS.colors.gradientEnd,
+    alignItems: 'center',
   },
 
-  // --- Header ---
+  // --- Back Button ---
   backButton: {
     position: 'absolute',
-    top: 60, // Matches status bar spacing
-    left: 24,
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.3)', // Subtle border as seen in UI
+    top: 60, // Safe Area estimate
+    left: TOKENS.spacing.gutter,
+    width: TOKENS.components.backBtnSize,
+    height: TOKENS.components.backBtnSize,
+    borderRadius: TOKENS.components.backBtnSize / 2,
+    borderWidth: 1,
+    borderColor: TOKENS.colors.textPrimary,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
-    backgroundColor: 'transparent',
   },
 
-  // --- Typography: 3D Logo ---
+  // --- Logo Typography ---
   logoContainer: {
     position: 'absolute',
-    top: height * 0.28, // Visual vertical center
+    top: height * TOKENS.spacing.logoTopPercent,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
+    width: 300, 
+    height: 250, // Enough height for the stacked text + shadow
   },
-  logoText: {
-    fontFamily: 'Antonio', // Primary Heading Font
-    fontSize: 120, // Huge size for hero effect
-    fontWeight: '700',
+  logoBase: {
+    fontFamily: TOKENS.typography.logoHero.fontFamily,
+    fontSize: TOKENS.typography.logoHero.fontSize,
+    fontWeight: '700', // matches Antonio Bold
     textAlign: 'center',
-    lineHeight: 110,
-    letterSpacing: -2,
+    lineHeight: TOKENS.typography.logoHero.lineHeight,
+    letterSpacing: TOKENS.typography.logoHero.letterSpacing,
     textTransform: 'uppercase',
   },
-  // The offsets create the 3D block direction (bottom-right)
-  logoShadowDeep: {
+  // The Black Shadow (Offset based on JSON)
+  logoShadow: {
     position: 'absolute',
-    color: '#000000',
-    transform: [{ translateX: 12 }, { translateY: 12 }], 
+    color: TOKENS.colors.logoShadow,
+    transform: [
+      { translateX: TOKENS.components.shadowOffset }, 
+      { translateY: TOKENS.components.shadowOffset }
+    ], 
     zIndex: 1,
-    textShadowColor: 'rgba(0,0,0,0.5)',
-    textShadowOffset: { width: 4, height: 4 },
-    textShadowRadius: 8,
+    // Note: React Native textShadow doesn't create a hard block, so we use the transform offset above.
+    // Adding a subtle shadow prop helps fill gaps if font rendering is thin.
+    textShadowColor: TOKENS.colors.logoShadow,
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
   },
-  logoShadowMid: {
+  // The Masked Gradient Face
+  logoFaceWrapper: {
     position: 'absolute',
-    color: '#381C67', // Primary Purple for depth
-    transform: [{ translateX: 6 }, { translateY: 6 }],
     zIndex: 2,
+    transform: [{ translateX: 0 }, { translateY: 0 }], 
   },
-  logoFace: {
-    color: '#DCC8FF', // Accent Lavender face
-    zIndex: 3,
+  maskedView: {
+    height: 250, 
+    width: 300,
   },
 
-  // --- Footer Layout ---
+  // --- Footer ---
   footer: {
     position: 'absolute',
-    bottom: 50,
+    bottom: TOKENS.spacing.footerBottom,
     width: '100%',
-    paddingHorizontal: 24, // Screen gutter
+    paddingHorizontal: TOKENS.spacing.gutter,
     alignItems: 'center',
   },
-
-  // Divider
   dividerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -160,36 +218,42 @@ const styles = StyleSheet.create({
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Faded line
+    backgroundColor: TOKENS.colors.divider,
   },
   dividerText: {
-    color: '#FFFFFF',
+    color: TOKENS.colors.textPrimary,
     paddingHorizontal: 16,
-    fontFamily: 'Metropolis SemiBold', // Secondary font
-    fontSize: 12,
-    letterSpacing: 1.2,
+    fontFamily: TOKENS.typography.dividerLabel.fontFamily,
+    fontSize: TOKENS.typography.dividerLabel.fontSize,
+    letterSpacing: TOKENS.typography.dividerLabel.letterSpacing,
     textTransform: 'uppercase',
     fontWeight: '600',
   },
 
-  // Buttons
+  // --- Buttons ---
   googleButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%', // Full width of container (padded)
-    maxWidth: 340, // Cap width for tablet/large screens
-    height: 56,
-    borderRadius: 100, // Pill shape
+    width: '100%',
+    maxWidth: TOKENS.components.authBtnMaxWidth,
+    height: TOKENS.components.authBtnHeight,
+    borderRadius: TOKENS.components.authBtnRadius,
     borderWidth: 1.5,
-    borderColor: '#FFFFFF',
-    marginBottom: 16,
-    backgroundColor: '#000000', // Explicit black background
+    borderColor: TOKENS.colors.textPrimary, // White border
+    marginBottom: TOKENS.spacing.stackGap,
+    backgroundColor: '#000000', // Black BG
+  },
+  btnIconImage: {
+    width: 20,
+    height: 20,
+    marginRight: 12,
+    resizeMode: 'contain', // Keeps the G aspect ratio correct
   },
   googleBtnText: {
-    color: '#FFFFFF',
-    fontFamily: 'Metropolis SemiBold',
-    fontSize: 16,
+    color: TOKENS.colors.textPrimary, // White text
+    fontFamily: TOKENS.typography.buttonLabel.fontFamily,
+    fontSize: TOKENS.typography.buttonLabel.fontSize,
     fontWeight: '600',
   },
   
@@ -198,21 +262,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    maxWidth: 340,
-    height: 56,
-    borderRadius: 100,
-    backgroundColor: '#FFFFFF', // Solid White
+    maxWidth: TOKENS.components.authBtnMaxWidth,
+    height: TOKENS.components.authBtnHeight,
+    borderRadius: TOKENS.components.authBtnRadius,
+    backgroundColor: '#FFFFFF', // White BG
   },
   appleBtnText: {
-    color: '#000000',
-    fontFamily: 'Metropolis SemiBold',
-    fontSize: 16,
+    color: TOKENS.colors.textInverse, // Black text
+    fontFamily: TOKENS.typography.buttonLabel.fontFamily,
+    fontSize: TOKENS.typography.buttonLabel.fontSize,
     fontWeight: '600',
   },
-  
   btnIcon: {
     marginRight: 12,
-    // Optical alignment adjustment if needed
-    marginTop: -2, 
+    marginTop: -2, // Optical alignment
   },
 });

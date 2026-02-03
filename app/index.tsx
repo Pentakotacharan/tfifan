@@ -1,99 +1,181 @@
 import React from 'react';
-import { View, Text, StyleSheet, StatusBar, SafeAreaView } from 'react-native';
-import { router } from 'expo-router';
-import { Colors } from '@/constants/Colors';
-import { PrimaryButton } from '@/components/PrimaryButton';
-import { OnboardingProgress } from '@/components/OnboardingProgress';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
+import { useRouter } from 'expo-router';
 
-export default function WelcomeScreen() {
-  const handleCreateAccount = () => {
-    // Navigate to next auth step or tabs
-    // router.push('/(tabs)'); 
-    router.push('/signup');
-    console.log("Create Account Pressed");
-  };
+// Screen Dimensions used to verify centering if needed, 
+// though we rely on Flex centering for 'x: center' items.
+const { width } = Dimensions.get('window');
 
-  const handleLogin = () => {
-    // Navigate to login modal or screen
-    // router.push('/login');
-    console.log("Login Pressed");
-  };
+export default function IntroScreen() {
+  const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
-  
-      {/* Top Section: Progress Bar */}
-      <View style={styles.header}>
-        <OnboardingProgress totalSteps={4} currentStep={2} />
+    <View style={styles.container}>
+      <StatusBar style="light" />
+      
+      {/* Background Gradient */}
+      <LinearGradient
+        // JSON: top-to-bottom, #381C67 (40.591%) -> #000000 (100%)
+        colors={['#381C67', '#000000']}
+        locations={[0.40591, 1.0]}
+        style={StyleSheet.absoluteFill}
+      />
+
+      {/* --- Progress Bars (Top: 51px) --- */}
+      {/* JSON defines 3 explicit bars, implied 4th based on spacing/pattern */}
+      {/* <View style={[styles.progressBar, { left: 12, backgroundColor: '#FFFFFF' }]} />
+      <View style={[styles.progressBar, { left: 115, backgroundColor: '#FFFFFF' }]} />
+      <View style={[styles.progressBar, { left: 218, backgroundColor: '#604F80' }]} />
+      <View style={[styles.progressBar, { left: 321, backgroundColor: '#604F80' }]} /> */}
+
+      {/* --- Typography Group --- */}
+      
+      {/* Heading: "Introducing" (y: 333) */}
+      <Text style={styles.headingText}>Introducing</Text>
+
+      {/* Main Logo: "TFIFAN" (y: 355) */}
+      <Text style={styles.logoText}>TFIFAN</Text>
+
+      {/* Tagline: "CREATED FOR CULTS..." (y: 477) */}
+      <Text style={styles.taglineText}>CREATED FOR CULTS BY A CULT</Text>
+
+      {/* --- CTA Button (y: 770) --- */}
+      <View style={styles.ctaWrapper}>
+        {/* Hard Shadow Layer (Offset: -3, 3) */}
+        <View style={styles.ctaShadow} />
+        
+        {/* Main Button Layer */}
+        <TouchableOpacity 
+          activeOpacity={0.9} 
+          onPress={() => router.push('/signup')}
+          style={styles.ctaButtonContainer}
+        >
+          <LinearGradient
+            colors={['#573199', '#341D5D']}
+            style={styles.ctaGradient}
+          >
+            <Text style={styles.ctaText}>Create Your Free Account</Text>
+          </LinearGradient>
+        </TouchableOpacity>
       </View>
 
-      {/* Middle Section: Typography / Hero */}
-      <View style={styles.content}>
-        <Text style={styles.introText}>Introducing</Text>
-        <Text style={styles.titleText}>TFIFAN</Text>
-        <Text style={styles.taglineText}>CREATED FOR CULTS BY A CULT</Text>
-      </View>
-
-      {/* Bottom Section: Actions */}
-      <View style={styles.footer}>
-        <PrimaryButton 
-          title="Create Your Free Account" 
-          onPress={handleCreateAccount} 
-        />
-        <PrimaryButton 
-          title="LOGIN TO EXISITING ACCOUNT" 
-          variant="text" 
-          onPress={handleLogin}
-          style={{ marginTop: 10 }}
-        />
-      </View>
-    </SafeAreaView>
+      {/* --- Secondary Link (y: 868) --- */}
+      <TouchableOpacity 
+        style={styles.loginLinkWrapper}
+        onPress={() => router.push('/signup')}
+      >
+        <Text style={styles.loginLinkText}>LOGIN TO EXISTING ACCOUNT</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.background,
+    backgroundColor: '#000000', // Fallback
   },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
+  // --- Progress Bar Styles ---
+  progressBar: {
+    position: 'absolute',
+    top: 51,
+    width: 96,
+    height: 6,
+    borderRadius: 10,
   },
-  content: {
+  // --- Typography Styles ---
+  headingText: {
+    position: 'absolute',
+    top: 250,
+    width: '100%',
+    textAlign: 'center',
+    fontFamily: 'Zin Display Condensed Demo', // Ensure font is loaded
+    fontWeight: '400',
+    fontSize: 35,
+    color: '#FFFFFF',
+    lineHeight: 32, // explicit line height helps positioning
+    zIndex: 2,
+  },
+  logoText: {
+    position: 'absolute',
+    top: 280,
+    width: '100%',
+    textAlign: 'center',
+    fontFamily: 'Antonio', // Ensure font is loaded
+    fontWeight: '700',
+    fontSize: 76,
+    color: '#FFFFFF',
+    textTransform: 'uppercase',
+    // Line height adjustment might be needed depending on font metrics to match overlap
+    lineHeight: 96, 
+    zIndex: 1,
+  },
+  taglineText: {
+    position: 'absolute',
+    top: 360,
+    width: '100%',
+    textAlign: 'center',
+    fontFamily: 'Zin Display Condensed Demo',
+    fontWeight: '400',
+    fontSize: 15,
+    color: '#FFFFFF',
+    zIndex: 2,
+  },
+  // --- CTA Button Styles ---
+  ctaWrapper: {
+    position: 'absolute',
+    top: 640,
+    alignSelf: 'center',
+    width: 300,
+    height: 65,
+    
+  },
+  ctaShadow: {
+    position: 'absolute',
+    width: 280,
+    height: 65,
+    borderRadius: 100,
+    backgroundColor: '#DCC8FF',
+    // JSON Shadow: Offset X -3, Y 3
+    top: 3,
+    left:6
+  },
+  ctaButtonContainer: {
+    width: 280,
+    height: 65,
+    borderRadius: 100,
+    borderWidth: 1.5,
+    borderColor: '#DCC8FF',
+    overflow: 'hidden', // clips the gradient
+    left:7,
+  },
+  ctaGradient: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
   },
-  introText: {
-    color: Colors.dark.text,
-    fontSize: 32,
-    fontFamily: 'serif', // Matches the serif style in the image
-    marginBottom: -5,    // Tighten spacing to the big title
+  ctaText: {
+    fontFamily: 'Zin Display Condensed Demo',
+    fontWeight: '400',
+    fontSize: 17,
+    color: '#FFFFFF',
+   
   },
-  titleText: {
-    color: Colors.dark.text,
-    fontSize: 84,        // Very large hero text
-    fontWeight: '900',
-    fontFamily: 'sans-serif-condensed', // condensed look
-    textTransform: 'uppercase',
-    letterSpacing: -2,
-    lineHeight: 90,
-  },
-  taglineText: {
-    color: Colors.dark.text,
-    fontSize: 12,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    marginTop: 10,
-    fontWeight: '500',
-  },
-  footer: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
+  // --- Login Link Styles ---
+  loginLinkWrapper: {
+    position: 'absolute',
+    top: 730,
     width: '100%',
     alignItems: 'center',
+  },
+  loginLinkText: {
+    fontFamily: 'Metropolis SemiBold',
+    fontWeight: '600',
+    fontSize: 12,
+    color: '#FFFFFF',
+    textTransform: 'uppercase',
+    letterSpacing: 0.48,
   },
 });

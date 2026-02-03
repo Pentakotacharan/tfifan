@@ -6,8 +6,8 @@ import {
   StyleSheet, 
   KeyboardAvoidingView, 
   Platform, 
-  TouchableOpacity, 
-  Alert
+  TouchableOpacity,
+  Alert 
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
@@ -18,11 +18,12 @@ export default function MovieScreen() {
   const [movie, setMovie] = useState('');
 
   const handleNext = () => {
-    // Navigate to final destination (e.g., Home Tabs)
     if (movie.trim() === '') {
-      Alert.alert("Required", "Please enter your favorite movie to continue.");
-      return; 
+      // Optional: Add alert
+      Alert.alert("Required", "Please enter your favorite movie.");
+      return;
     }
+    // Navigate to final destination (e.g., Home Tabs)
     console.log("Favorite Movie:", movie);
     router.push('/song'); 
   };

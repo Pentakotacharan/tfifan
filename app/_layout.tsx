@@ -16,8 +16,6 @@ export default function RootLayout() {
           animation: 'slide_from_right',
         }}
       >
-
-        <Stack.Screen name="IntroScreen" />
         {/* 1. Onboarding / Welcome Screen */}
         <Stack.Screen name="index" />
 
